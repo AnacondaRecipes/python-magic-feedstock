@@ -34,6 +34,7 @@ test:
   commands:
     - pip check
     - python -c "import magic; magic.Magic()"
+    - export LC_ALL=en_US.UTF-8  # [osx]
     - pytest -v .
   requires:
     - pip
