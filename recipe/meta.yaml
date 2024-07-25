@@ -16,7 +16,7 @@ build:
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
   skip: true  # [py<38 or win]
   patches:
-      - absolute_path_fix.patch
+      - absolute-path-fix.patch
 
 requirements:
   build:
