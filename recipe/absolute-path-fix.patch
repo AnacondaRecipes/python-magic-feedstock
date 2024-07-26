@@ -1,0 +1,16 @@
+diff --git a/magic/loader.py b/magic/loader.py
+index 931f161..8847852 100644
+--- a/magic/loader.py
++++ b/magic/loader.py
+@@ -11,10 +11,7 @@ def _lib_candidates():
+   if sys.platform == 'darwin':
+ 
+     paths = [
+-      '/opt/local/lib',
+-      '/usr/local/lib',
+-      '/opt/homebrew/lib',
+-    ] + glob.glob('/usr/local/Cellar/libmagic/*/lib')
++    ] + os.path.expandvars('$CONDA_PREFIX/lib')
+ 
+     for i in paths:
+       yield os.path.join(i, 'libmagic.dylib')

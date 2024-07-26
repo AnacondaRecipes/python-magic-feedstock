@@ -1,47 +1,62 @@
 {% set name = "python-magic" %}
 {% set version = "0.4.27" %}
-{% set hash_val = "c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b" %}
+{% set hash_val = "3978a25d43d9a7b8a89ae9d726bd4962fc90dc4f69ae852e399f3c56d4b0bd63" %}
 
 package:
   name: {{ name }}
   version: {{ version }}
 
 source:
-  fn: {{ name }}-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  url: https://github.com/ahupp/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: {{ hash_val }}
   patches:
-    # - discover-libmagic-dylib.patch  # [osx]
-      - 0001-load-magic-file.patch
+      - absolute-path-fix.patch
+
 
 build:
-  number: 3
-  script: {{ PYTHON }} -m pip install . --no-deps -vv
-  skip: true  # [win]
+  number: 0
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  skip: true  # [py<38 or win]
 
 requirements:
   build:
-    - python                                 # [build_platform != target_platform]
-    - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+    - patch       # [not win]
+    - m2-patch    # [win]
   host:
     - pip
     - python
+    - setuptools
+    - wheel
   run:
     - libmagic
     - python
 
 test:
+  source_files:
+    - test
   imports:
     - magic
   commands:
+    - pip check
     - python -c "import magic; magic.Magic()"
+    - export LC_ALL=en_US.UTF-8  # [osx]
+    - pytest -v .
+  requires:
+    - pip
+    - pytest
 
 about:
-  home: http://github.com/ahupp/python-magic
+  home: https://github.com/ahupp/python-magic
   license: MIT
   license_file: LICENSE
   license_family: MIT
   summary: File type identification using libmagic
+  description: |
+    python-magic is a Python interface to the libmagic 
+    file type identification library. libmagic identifies file types 
+    by checking their headers according to a predefined list of file types.
+  doc_url: https://github.com/ahupp/python-magic/blob/master/README.md
+  dev_url: https://github.com/ahupp/python-magic
 
 extra:
   recipe-maintainers:
